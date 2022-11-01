@@ -23,3 +23,7 @@ body {
 .cell {
     border: 1px solid grey;
 }
+
+.cell:hover {
+    background-color: yellow;
+}
