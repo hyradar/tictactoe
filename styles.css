@@ -1,0 +1,25 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+}
+
+body {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    height: 700px;
+}
+
+.gamegrid {
+    border: 2px solid grey;
+    width: 500px;
+    height: 500px;
+
+    display: grid;
+    grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+    justify-content: center;
+}
+
+.cell {
+    border: 1px solid grey;
+}
