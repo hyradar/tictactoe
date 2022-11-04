@@ -1,34 +1,85 @@
 
-
-//Render Board Function
 renderGameboard();
 
-//Creates gameboard array from DOM cells
-let gameboard = document.querySelectorAll('.cell');
-gameboard = Array.from(gameboard);
 
-console.log({gameboard});
 
-//Adds click event listener
-gameboard.forEach(item => {
-    item.addEventListener('click', function() {    
-    console.log('you clicked a square');
-    });
+//Game Tracker Module
+const game = (() => {
+    'use strict';
+
+    let checkWin;
+    let currentPlayer;
+    let titleCard = document.querySelector('.displayTurn');
+
+    function _startGame() {
+        
+        //Delete Start Button
+        let x = document.querySelector('.start').remove();
+        
+        //Update Onscreen Player Tracker
+        titleCard.innerHTML = 'Player Xs Turn';
+
+        //Add makeMove function to GameboardCells
+        board.gameboard.forEach(item => {
+            item.addEventListener('click', function() {    
+            makeMove(this);
+            });
 });
 
+    currentPlayer = playerX;
+    }
 
+    function updateTitle() {
+        //this function will update the title to show current player turn
+    }
 
-//Object to control the flow of the game - Use a module
+    //Problem: I don't want to update the innerHTML Directly
+    //I need to update the array
+    //and then just have a function that updates the board based
+    //on the array after every turn
+    function makeMove(cell) {
+        if (currentPlayer === playerX) {
+            cell.innerHTML = 'X';
+        }
+        else {
+            cell.innerHTML = 'O';
+        }
+        game.changePlayer();
+    }
 
-//Player Factory Function
-const Player = (name) => {
-    
-    let isTurn = false;
-    // const makeChoice 
+    function changePlayer() {
+        
+        if (currentPlayer === playerX) {
+            currentPlayer = playerO;
+            console.log('player changing to O');
+            titleCard.innerHTML = 'Player Os Turn'
+        }
+        else {
+            currentPlayer = playerX;
+            console.log('player changing to X');
+            titleCard.innerHTML = 'Player Xs Turn';
+        }
+    }
 
-}
+    return {
+        checkWin,
+        _startGame,
+        changePlayer,
+    };
+})();
 
-//Create and Append Elements 
+//Game Board Module
+const board = (() => {
+
+    //Creates gameboard array from DOM cells
+    let gameboard = document.querySelectorAll('.cell');
+    gameboard = Array.from(gameboard);
+
+    return {
+        gameboard,
+    };
+})();
+
 function renderGameboard () {
     let grid = document.createElement('div');
     let body = document.querySelector('.body');
@@ -41,3 +92,31 @@ function renderGameboard () {
         grid.append(newCell);
     }
 }
+
+// const GameBoard = (() => {
+
+// })();
+
+// const DisplayController = ((container)=>{
+
+// })();
+
+// const GameTracker = ((state, view, Player) => {
+    
+// })(Gameboard, DisplayController, Player);
+
+//Player Factory Function
+const Player = (name, symbol) => {
+
+    return {
+        name,
+        symbol,
+    }
+}
+
+let startButton = document.querySelector('.start').addEventListener('click', game._startGame);
+
+//Create Players
+let playerX = Player('Player 1', 'X');
+let playerO = Player('Player 2', 'O');
+
