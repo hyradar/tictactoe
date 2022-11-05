@@ -68,29 +68,29 @@ const GameBoard = (() => {
 const DisplayController = ((container)=>{
     
     //Initialize variables for HTML Elements + Create Grid
-    let turnDisplay = document.querySelector('.displayTurn');
-    let body = document.querySelector('.body');
-    let grid = document.createElement('div');
+    let _turnDisplay = document.querySelector('.displayTurn');
+    let _body = document.querySelector('.body');
+    let _grid = document.createElement('div');
     
-    grid.className = 'gamegrid';
-    body.append(grid);
+    _grid.className = 'gamegrid';
+    _body.append(_grid);
     
     //Array to store DOM grid
-    let DOMBoard = [];
+    let _DOMBoard = [];
 
     //Populate Grid with new cells
     for (let i = 0; i < 9; i++) {
         let newCell = document.createElement('div');
-        grid.append(newCell);
+        _grid.append(newCell);
 
         newCell.className = 'cell';
         newCell.id = i;
-        DOMBoard[i] = newCell;
+        _DOMBoard[i] = newCell;
     }
 
     //This is here so that I don't have listeners until gamestarts
     function addListeners() {
-        DOMBoard.forEach(item => {
+        _DOMBoard.forEach(item => {
             item.addEventListener('click', function(){
                 GameTracker.makeMove(this);
             }, false);
@@ -99,28 +99,28 @@ const DisplayController = ((container)=>{
 
     //Removes event listeners by replacing old cells with new ones
     function removeEventListener() {
-        console.log({DOMBoard});
-        for (let i = 0; i < DOMBoard.length; i++) {
-            let new_cell = DOMBoard[i].cloneNode(true);
-            DOMBoard[i] = new_cell;
+        console.log({_DOMBoard});
+        for (let i = 0; i < _DOMBoard.length; i++) {
+            let new_cell = _DOMBoard[i].cloneNode(true);
+            _DOMBoard[i] = new_cell;
         }
     }
 
     function updateBoard (gameboard) {
        for (i = 0; i < gameboard.length; i++) {
-        DOMBoard[i].innerHTML = gameboard[i];
+        _DOMBoard[i].innerHTML = gameboard[i];
        }
     }
 
     function updateTitle(player) {
         if (player === GameTracker.playerX) {
-            turnDisplay.innerHTML = 'Player X\'s turn';
+            _turnDisplay.innerHTML = 'Player X\'s turn';
         } else if (player === GameTracker.playerO) {
-            turnDisplay.innerHTML = 'Player O\'s Turn';
+            _turnDisplay.innerHTML = 'Player O\'s Turn';
         } else if (player === 'XWins') {
-            turnDisplay.innerHTML = 'X Wins!';
+            _turnDisplay.innerHTML = 'X Wins!';
         } else if (player === 'OWins') {
-            turnDisplay.innerHTML = 'O wins!';
+            _turnDisplay.innerHTML = 'O wins!';
         }
     }
 
@@ -139,6 +139,7 @@ const Player = () => {
 const GameTracker = ((state, view, Player) => {    
     let playerX = Player();
     let playerO = Player();
+    //Add StartGame Listener to Start Button
     document.querySelector('.start').addEventListener('click', _startGame);
 
     function _startGame() {
@@ -146,9 +147,8 @@ const GameTracker = ((state, view, Player) => {
         //Delete Start Button
         document.querySelector('.start').remove(); 
         
-        //Setup current player
-        currentPlayer = GameTracker.playerX;
-
+        //Setup current player + Title + EventListeners
+        currentPlayer = playerX;
         view.updateTitle(currentPlayer);
         view.addListeners();
     };
@@ -158,11 +158,11 @@ const GameTracker = ((state, view, Player) => {
 
         let index = cell.id;
         //Checks to see if Cell is empty
-        if (state.gameboard[cell.id] === '') {
+        if (state.gameboard[index] === '') {
             if (currentPlayer === playerX) {
-                state.gameboard[cell.id] = 'X';
+                state.gameboard[index] = 'X';
             } else if (currentPlayer === playerO) {
-                state.gameboard[cell.id] = 'O';
+                state.gameboard[index] = 'O';
             }
 
             //Update board and check win
@@ -171,7 +171,7 @@ const GameTracker = ((state, view, Player) => {
 
             //If game continues
             if (gameOver !== 'XWins' && gameOver !== 'OWins') {
-                changePlayer();
+                _changePlayer();
                 view.updateTitle(currentPlayer);
             
             //If game is over
@@ -185,13 +185,12 @@ const GameTracker = ((state, view, Player) => {
         }
     }
 
-    function changePlayer() {
-        view.DOMBoard
-        if (currentPlayer === GameTracker.playerX) {
-            currentPlayer = GameTracker.playerO;
+    function _changePlayer() {
+        if (currentPlayer === playerX) {
+            currentPlayer = playerO;
             
-        } else if (currentPlayer === GameTracker.playerO) {
-            currentPlayer = GameTracker.playerX;
+        } else if (currentPlayer === playerO) {
+            currentPlayer = playerX;
         }
     }
 
