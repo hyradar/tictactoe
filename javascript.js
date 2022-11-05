@@ -1,122 +1,190 @@
 
-renderGameboard();
 
+const GameBoard = (() => {
 
-
-//Game Tracker Module
-const game = (() => {
-    'use strict';
-
-    let checkWin;
     let currentPlayer;
-    let titleCard = document.querySelector('.displayTurn');
+    let gameboard = ['', '', '', '', '', '', '', '', ''];
+    gameboard.length = 9;
+
+    function checkWin() {
+
+        console.log('checkwin running');
+        //X
+        //Horizontal
+        if (gameboard[0] === 'X' && gameboard[1] === 'X' && gameboard[2] == 'X') {
+            return 'XWins';
+        } else if (gameboard[3] === 'X' && gameboard[4] === 'X' && gameboard[5] == 'X') {
+            return 'XWins';
+        } else if (gameboard[6] === 'X' && gameboard[7] === 'X' && gameboard[8] == 'X') {
+            return 'XWins';
+        }
+
+        //Vertical
+        else if (gameboard[0] === 'X' && gameboard[3] === 'X' && gameboard[6] == 'X') {
+            return 'XWins';
+        } else if (gameboard[1] === 'X' && gameboard[4] === 'X' && gameboard[7] == 'X') {
+            return 'XWins';
+        } else if (gameboard[2] === 'X' && gameboard[5] === 'X' && gameboard[8] == 'X') {
+            return 'XWins';
+        }
+
+        //Diagnol
+        else if (gameboard[0] === 'X' && gameboard[4] === 'X' && gameboard[8] == 'X') {
+            return 'XWins';
+        } else if (gameboard[2] === 'X' && gameboard[4] === 'X' && gameboard[6] == 'X') {
+            return 'XWins';
+        }
+
+        //O
+        //Horizontal
+        if (gameboard[0] === 'O' && gameboard[1] === 'O' && gameboard[2] == 'O') {
+            return 'OWins';
+        } else if (gameboard[3] === 'O' && gameboard[4] === 'O' && gameboard[5] == 'O') {
+            return 'OWins';
+        } else if (gameboard[6] === 'O' && gameboard[7] === 'O' && gameboard[8] == 'O') {
+            return 'OWins';
+        }
+
+        //Vertical
+        else if (gameboard[0] === 'O' && gameboard[3] === 'O' && gameboard[6] == 'O') {
+            return 'OWins';
+        } else if (gameboard[1] === 'O' && gameboard[4] === 'O' && gameboard[7] == 'O') {
+            return 'OWins';
+        } else if (gameboard[2] === 'O' && gameboard[5] === 'O' && gameboard[8] == 'O') {
+            return 'OWins';
+        }
+
+        //Diagnol
+        else if (gameboard[0] === 'O' && gameboard[4] === 'O' && gameboard[8] == 'O') {
+            return 'OWins';
+        } else if (gameboard[2] === 'O' && gameboard[4] === 'O' && gameboard[6] == 'O') {
+            return 'OWins';
+        }
+        return '';
+    }
+
+    return {
+        gameboard,
+        checkWin,
+    };
+})();
+
+const DisplayController = ((container)=>{
+    let turnDisplay = document.querySelector('.displayTurn');
+    let body = document.querySelector('.body');
+    let grid = document.createElement('div');
+
+    grid.className = 'gamegrid';
+    body.append(grid);
+    
+    let DOMBoard = [];
+
+    for (let i = 0; i < 9; i++) {
+        let newCell = document.createElement('div');
+        grid.append(newCell);
+
+        newCell.className = 'cell';
+        newCell.id = i;
+        DOMBoard[i] = newCell;
+    }
+
+    //This is here so that I don't have listeners until gamestarts
+    function addListeners() {
+        
+        //when I had item => function()... it didn't work!
+        DOMBoard.forEach(item => {
+            item.addEventListener('click', function(){
+                GameTracker.makeMove(this);
+            }, false);
+        });
+    }
+
+    function updateBoard (gameboard) {
+       for (i = 0; i < gameboard.length; i++) {
+        DOMBoard[i].innerHTML = gameboard[i];
+       }
+    }
+
+    function updateTitle(player) {
+        if (player === GameTracker.playerX) {
+            turnDisplay.innerHTML = 'Player X\'s turn';
+        } else if (player === GameTracker.playerO) {
+            turnDisplay.innerHTML = 'Player O\'s Turn';
+        } else if (player === 'XWins') {
+            turnDisplay.innerHTML = 'X Wins!';
+        } else if (player === 'OWins') {
+            turnDisplay.innerHTML = 'O wins!';
+        }
+    }
+
+    return {
+        updateTitle,
+        updateBoard,
+        addListeners,
+    }
+})();
+
+const Player = () => {
+    return {}
+}
+
+const GameTracker = ((state, view, Player) => {    
+    let playerX = Player();
+    let playerO = Player();
+    document.querySelector('.start').addEventListener('click', _startGame);
 
     function _startGame() {
         
         //Delete Start Button
-        let x = document.querySelector('.start').remove();
+        document.querySelector('.start').remove(); 
         
-        //Update Onscreen Player Tracker
-        titleCard.innerHTML = 'Player Xs Turn';
+        //Setup current player
+        currentPlayer = GameTracker.playerX;
 
-        //Add makeMove function to GameboardCells
-        board.gameboard.forEach(item => {
-            item.addEventListener('click', function() {    
-            makeMove(this);
-            });
-});
+        view.updateTitle(currentPlayer);
+        view.addListeners();
+    };
 
-    currentPlayer = playerX;
-    }
-
-    function updateTitle() {
-        //this function will update the title to show current player turn
-    }
-
-    //Problem: I don't want to update the innerHTML Directly
-    //I need to update the array
-    //and then just have a function that updates the board based
-    //on the array after every turn
+    //add try catch?
     function makeMove(cell) {
-        if (currentPlayer === playerX) {
-            cell.innerHTML = 'X';
+
+        let index = cell.id;
+        //Checks to see if Cell is empty
+        if (state.gameboard[cell.id] === '') {
+            if (currentPlayer === GameTracker.playerX) {
+                state.gameboard[cell.id] = 'X';
+            } else if (currentPlayer === GameTracker.playerO) {
+                state.gameboard[cell.id] = 'O';
+            }
+
+            view.updateBoard(state.gameboard);
+            let gameOver = state.checkWin();
+            console.log('gameover quals' + gameOver);
+
+            if (gameOver !== 'XWins' && gameOver !== 'OWins') {
+                changePlayer();
+                view.updateTitle(currentPlayer);
+            } else if (gameOver === 'XWins') {
+                view.updateTitle('XWins');
+            } else if (gameOver === 'OWins') {
+                view.updateTitle('OWins');
+            }
         }
-        else {
-            cell.innerHTML = 'O';
-        }
-        game.changePlayer();
     }
 
     function changePlayer() {
         
-        if (currentPlayer === playerX) {
-            currentPlayer = playerO;
-            console.log('player changing to O');
-            titleCard.innerHTML = 'Player Os Turn'
-        }
-        else {
-            currentPlayer = playerX;
-            console.log('player changing to X');
-            titleCard.innerHTML = 'Player Xs Turn';
+        if (currentPlayer === GameTracker.playerX) {
+            currentPlayer = GameTracker.playerO;
+        } else if (currentPlayer === GameTracker.playerO) {
+            currentPlayer = GameTracker.playerX;
         }
     }
 
     return {
-        checkWin,
-        _startGame,
-        changePlayer,
-    };
-})();
-
-//Game Board Module
-const board = (() => {
-
-    //Creates gameboard array from DOM cells
-    let gameboard = document.querySelectorAll('.cell');
-    gameboard = Array.from(gameboard);
-
-    return {
-        gameboard,
-    };
-})();
-
-function renderGameboard () {
-    let grid = document.createElement('div');
-    let body = document.querySelector('.body');
-    grid.className = 'gamegrid';
-    body.append(grid);
-
-    for (let i = 0; i < 9; i++) {
-        let newCell = document.createElement('div');
-        newCell.className = 'cell';
-        grid.append(newCell);
+        playerX,
+        playerO,
+        makeMove,
     }
-}
 
-// const GameBoard = (() => {
-
-// })();
-
-// const DisplayController = ((container)=>{
-
-// })();
-
-// const GameTracker = ((state, view, Player) => {
-    
-// })(Gameboard, DisplayController, Player);
-
-//Player Factory Function
-const Player = (name, symbol) => {
-
-    return {
-        name,
-        symbol,
-    }
-}
-
-let startButton = document.querySelector('.start').addEventListener('click', game._startGame);
-
-//Create Players
-let playerX = Player('Player 1', 'X');
-let playerO = Player('Player 2', 'O');
-
+})(GameBoard, DisplayController, Player);
