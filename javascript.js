@@ -1,5 +1,3 @@
-
-
 const GameBoard = (() => {
 
     let currentPlayer;
@@ -70,10 +68,12 @@ const GameBoard = (() => {
 })();
 
 const DisplayController = ((container)=>{
+    
     let turnDisplay = document.querySelector('.displayTurn');
     let body = document.querySelector('.body');
     let grid = document.createElement('div');
 
+    let x;
     grid.className = 'gamegrid';
     body.append(grid);
     
@@ -90,14 +90,22 @@ const DisplayController = ((container)=>{
 
     //This is here so that I don't have listeners until gamestarts
     function addListeners() {
-        
         //when I had item => function()... it didn't work!
+
         DOMBoard.forEach(item => {
             item.addEventListener('click', function(){
                 GameTracker.makeMove(this);
             }, false);
         });
     }
+
+    // function removeEventListener() {
+    //     console.log({DOMBoard});
+    //     DOMBoard.forEach(item => {
+    //         console.log('remove is runining');
+    //         item.removeEventListener('click', GameTracker.tracker);
+    //     });
+    // }
 
     function updateBoard (gameboard) {
        for (i = 0; i < gameboard.length; i++) {
@@ -121,6 +129,7 @@ const DisplayController = ((container)=>{
         updateTitle,
         updateBoard,
         addListeners,
+        removeEventListener,
     }
 })();
 
@@ -157,17 +166,22 @@ const GameTracker = ((state, view, Player) => {
                 state.gameboard[cell.id] = 'O';
             }
 
+            //Update board and check win
             view.updateBoard(state.gameboard);
             let gameOver = state.checkWin();
-            console.log('gameover quals' + gameOver);
 
+            //If game continues
             if (gameOver !== 'XWins' && gameOver !== 'OWins') {
                 changePlayer();
                 view.updateTitle(currentPlayer);
+            
+            //If game is over
             } else if (gameOver === 'XWins') {
                 view.updateTitle('XWins');
+                // view.removeEventListener();
             } else if (gameOver === 'OWins') {
                 view.updateTitle('OWins');
+                // view.removeEventListener();
             }
         }
     }
