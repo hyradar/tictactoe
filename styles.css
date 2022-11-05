@@ -22,6 +22,9 @@ body {
 
 .cell {
     border: 1px solid grey;
+    text-align: center;
+    padding: 70px 0px;
+    font-size: 20px;
 }
 
 .cell:hover {
